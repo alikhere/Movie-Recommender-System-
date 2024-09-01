@@ -1,47 +1,12 @@
 import streamlit as st
 import pickle
+import requests
 import aiohttp
 import asyncio
-import os
 
-# URL of the file hosted publicly (corrected direct download link)
-FILE_URL = "https://drive.google.com/uc?export=download&id=1iUGB7MPYoLW-4uPMenwq9nVCgjRwCjtm"
+movies = pickle.load(open('movies.pkl','rb'))
+similarity = pickle.load(open('similarity.pkl','rb'))
 
-# Function to download a file
-async def download_file(url, local_path):
-    async with aiohttp.ClientSession() as session:
-        async with session.get(url) as response:
-            if response.status == 200:
-                with open(local_path, 'wb') as f:
-                    while True:
-                        chunk = await response.content.read(1024)
-                        if not chunk:
-                            break
-                        f.write(chunk)
-                print("File downloaded successfully.")
-            else:
-                print(f"Failed to download the file. Status code: {response.status}")
-
-# Function to load data
-def load_data():
-    # Check if the file exists locally; if not, download it
-    if not os.path.exists('similarity.pkl'):
-        asyncio.run(download_file(FILE_URL, 'similarity.pkl'))
-    
-    # Ensure movies.pkl is also loaded
-    if not os.path.exists('movies.pkl'):
-        raise FileNotFoundError("movies.pkl not found. Ensure the file is available in the directory.")
-    
-    with open('movies.pkl', 'rb') as f:
-        movies = pickle.load(f)
-    
-    with open('similarity.pkl', 'rb') as f:
-        similarity = pickle.load(f)
-
-    return movies, similarity
-
-# Load the movies and similarity data
-movies, similarity = load_data()
 
 async def fetch_poster(session, movie_id):
     url = f'https://api.themoviedb.org/3/movie/{movie_id}?api_key=fb7bb23f03b6994dafc674c074d01761&language=en-US'
