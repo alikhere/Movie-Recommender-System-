@@ -24,7 +24,7 @@ async def fetch_posters(movie_ids):
 def recommend(movie):
     movie_index = movies[movies['title'] == movie].index[0]
     distances = similarity[movie_index]
-    movies_list = sorted(list(enumerate(distances)), reverse=True, key=lambda x: x[1])[1:17]
+    movies_list = sorted(list(enumerate(distances)), reverse=True, key=lambda x: x[1])[1:7]
 
     recommended_movies = []
     movie_ids = [movies.iloc[i[0]].movie_id for i in movies_list]
@@ -85,17 +85,24 @@ with col2:
     )
     recommend_button_clicked = st.button("Recommend")
 
+# Initialize posters and names before the button is clicked
+posters = []
+names = []
+
 if recommend_button_clicked:
     names, posters = recommend(selected_movie_name)
 
-    # Display movies in two rows with 8 posters each, filling the entire screen width
-    for row in range(2):
-        cols = st.columns(8)
-        for i in range(8):
-            index = row * 8 + i
+# Only display if posters and names are available
+if posters and names:
+    num_columns = 6  # Set the number of posters per row
+    for row in range((len(posters) + num_columns - 1) // num_columns):  # Calculate the number of rows needed
+        cols = st.columns(num_columns)
+        for i in range(num_columns):
+            index = row * num_columns + i
             if index < len(posters):
                 with cols[i]:
                     st.image(posters[index], caption=names[index], use_column_width=True)
+
 
 # Footer
 st.markdown("""
