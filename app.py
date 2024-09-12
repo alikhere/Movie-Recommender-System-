@@ -3,9 +3,13 @@ import pickle
 import requests
 import aiohttp
 import asyncio
+import gzip
 
 movies = pickle.load(open('movies.pkl','rb'))
-similarity = pickle.load(open('similarity.pkl','rb'))
+
+# Load the similarity matrix from the compressed file
+with gzip.open('similarity.pkl.gz', 'rb') as f:
+    similarity = pickle.load(f)
 
 
 async def fetch_poster(session, movie_id):
