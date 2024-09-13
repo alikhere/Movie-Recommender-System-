@@ -5,7 +5,7 @@ import aiohttp
 import asyncio
 import gzip
 
-movies = pickle.load(open('movies.pkl','rb'))
+movies = pickle.load(open('movies.pkl', 'rb'))
 
 # Load the similarity matrix from the compressed file
 with gzip.open('similarity.pkl.gz', 'rb') as f:
@@ -28,7 +28,8 @@ async def fetch_posters(movie_ids):
 def recommend(movie):
     movie_index = movies[movies['title'] == movie].index[0]
     distances = similarity[movie_index]
-    movies_list = sorted(list(enumerate(distances)), reverse=True, key=lambda x: x[1])[1:7]
+    # Fetch 16 movies (for 2 rows with 8 movies each)
+    movies_list = sorted(list(enumerate(distances)), reverse=True, key=lambda x: x[1])[1:17]
 
     recommended_movies = []
     movie_ids = [movies.iloc[i[0]].movie_id for i in movies_list]
@@ -98,8 +99,8 @@ if recommend_button_clicked:
 
 # Only display if posters and names are available
 if posters and names:
-    num_columns = 6  # Set the number of posters per row
-    for row in range((len(posters) + num_columns - 1) // num_columns):  # Calculate the number of rows needed
+    num_columns = 8  # Set the number of posters per row
+    for row in range(2):  # Ensure 2 rows (8 movies each) are shown
         cols = st.columns(num_columns)
         for i in range(num_columns):
             index = row * num_columns + i
