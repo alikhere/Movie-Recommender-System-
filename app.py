@@ -7,7 +7,7 @@ import gzip
 
 movies = pickle.load(open('movies.pkl', 'rb'))
 
-# Load the similarity matrix from the compressed file
+# Load the similarity matrix from the compressed file//
 with gzip.open('similarity.pkl.gz', 'rb') as f:
     similarity = pickle.load(f)
 
